@@ -1,4 +1,4 @@
-package com.example.kotlinweatherapp.presentation.screens
+package com.example.kotlinweatherapp.features.weather.presentation.screens
 
 import android.content.Context
 import android.util.Log
@@ -14,10 +14,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -32,13 +36,15 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.kotlinweatherapp.R
-import com.example.kotlinweatherapp.presentation.composeables.CityWeatherItem
-import com.example.kotlinweatherapp.presentation.viewmodels.WeatherViewModel
+import com.example.kotlinweatherapp.core.MainApp
+import com.example.kotlinweatherapp.features.weather.presentation.composeables.CityWeatherItem
+import com.example.kotlinweatherapp.features.weather.presentation.WeatherViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(viewModel: WeatherViewModel, context: Context) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val weatherData = viewModel.weatherData.observeAsState()
+    val weatherData by viewModel.getAllWeatherItems().observeAsState()
     var cityToAdd by remember {
         mutableStateOf("")
     }
@@ -48,14 +54,21 @@ fun HomeScreen(viewModel: WeatherViewModel, context: Context) {
             .padding(20.dp)
             .padding(top = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
-
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround,
             modifier = Modifier.fillMaxWidth()
         ) {
-            OutlinedTextField(
+            OutlinedTextField(colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedTextColor = Color.Black,
+            ),
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = "Add City"
+                    )
+                },
                 label = { Text(text = "Add City") },
                 modifier = Modifier.fillMaxWidth(0.8f),
                 value = cityToAdd,
@@ -70,10 +83,9 @@ fun HomeScreen(viewModel: WeatherViewModel, context: Context) {
             ) {
                 IconButton(
                     onClick = {
+                        keyboardController?.hide()
                         if (cityToAdd.isNotBlank()) {
-                            keyboardController?.hide()
                             viewModel.getWeatherItem(city = cityToAdd.capitalize(), onFailure = {
-                                Log.d("Failuree", "HomeScreen: faileedddd")
                                 Toast.makeText(context, "Failed To Load", Toast.LENGTH_SHORT).show()
                             })
                             cityToAdd = ""
@@ -89,13 +101,18 @@ fun HomeScreen(viewModel: WeatherViewModel, context: Context) {
             }
 
         }
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            weatherData.value?.let {
-                itemsIndexed(it.toList()) { index, item ->
-                    CityWeatherItem(entity = item, onDelete = {
-                        viewModel.deleteItem(item)
-                    })
+        LazyColumn(modifier = Modifier
+            .padding(top = 5.dp)
+            .fillMaxSize()) {
+            weatherData.let {
+                it?.let {
+                    itemsIndexed(it.reversed().toList()) { index, item ->
+                        CityWeatherItem(entity = item, onDelete = {
+                            viewModel.deleteItem(item)
+                        })
+                    }
                 }
+
             }
         }
     }

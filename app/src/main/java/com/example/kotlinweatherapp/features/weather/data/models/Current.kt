@@ -1,4 +1,4 @@
-package com.example.kotlinweatherapp.data.entites
+package com.example.kotlinweatherapp.features.weather.data.models
 
 data class Current(
     val cloud: String,

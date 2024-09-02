@@ -1,4 +1,4 @@
-package com.example.kotlinweatherapp.data.api
+package com.example.kotlinweatherapp.core.api
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

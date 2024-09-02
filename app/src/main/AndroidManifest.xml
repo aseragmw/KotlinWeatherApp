@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.KotlinWeatherApp"
-        android:name=".data.MainApp"
+        android:name=".core.MainApp"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
