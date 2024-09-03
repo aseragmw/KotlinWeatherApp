@@ -4,5 +4,5 @@ import com.example.kotlinweatherapp.features.weather.domain.entities.weather_ent
 
 
 interface WeatherRemoteDataSource {
-    suspend fun getWeatherItem(city:String,onFailure:()->Unit):WeatherEntity?
+    suspend fun getWeatherItem(city:String):WeatherEntity?
 }

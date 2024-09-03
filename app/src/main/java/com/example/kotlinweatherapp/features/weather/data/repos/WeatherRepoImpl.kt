@@ -20,21 +20,25 @@ class WeatherRepoImpl @Inject constructor(
     val weatherRemoteDataSource: WeatherRemoteDataSource,
     val weatherLocalDataSource: WeatherLocalDataSource
 ) : WeatherRepo {
-    override fun getWeatherItem(city: String, onFailure: () -> Unit) {
-        CoroutineScope(
+    suspend override fun getWeatherItem(city: String):WeatherEntity? {
+        return withContext(
             Dispatchers.IO
-        ).launch {
-            val item = weatherRemoteDataSource.getWeatherItem(city, onFailure)
-            Log.d("item", item.toString())
-            if (item == null) {
-                withContext(
-                    Dispatchers.Main
-                ) {
-                    onFailure()
+        ) {
+
+                val item = weatherRemoteDataSource.getWeatherItem(city)
+                Log.d("item", item.toString())
+
+                if (item == null) {
+                    withContext(
+                        Dispatchers.Main
+                    ) {
+                        throw Exception("Failed to get weather")
+                    }
+                } else {
+                    weatherLocalDataSource.insertWeatherItem(item)
                 }
-            } else {
-                weatherLocalDataSource.insertWeatherItem(item)
-            }
+                item
+
         }
     }
 

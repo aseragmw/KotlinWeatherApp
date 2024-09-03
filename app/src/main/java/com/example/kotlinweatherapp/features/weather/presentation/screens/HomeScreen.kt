@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,6 +24,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +40,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.kotlinweatherapp.R
 import com.example.kotlinweatherapp.core.MainApp
+import com.example.kotlinweatherapp.core.RequestState
+import com.example.kotlinweatherapp.features.weather.domain.entities.weather_entity.WeatherEntity
 import com.example.kotlinweatherapp.features.weather.presentation.composeables.CityWeatherItem
 import com.example.kotlinweatherapp.features.weather.presentation.WeatherViewModel
 
@@ -45,9 +50,25 @@ import com.example.kotlinweatherapp.features.weather.presentation.WeatherViewMod
 fun HomeScreen(viewModel: WeatherViewModel, context: Context) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val weatherData by viewModel.getAllWeatherItems().observeAsState()
+
     var cityToAdd by remember {
         mutableStateOf("")
     }
+    val state by viewModel.getWeatherItemState.collectAsState()
+
+    LaunchedEffect(state) {
+        when(state){
+            is RequestState.Loading,
+            RequestState.Initial -> null
+            is RequestState.Success-> {
+                Toast.makeText(context, "Successfully loaded ${(state as RequestState.Success<WeatherEntity?>).data?.location}", Toast.LENGTH_SHORT).show()
+            }
+            is RequestState.Failure-> {
+                Toast.makeText(context, (state as RequestState.Failure<WeatherEntity?>).error, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -55,14 +76,19 @@ fun HomeScreen(viewModel: WeatherViewModel, context: Context) {
             .padding(top = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround,
             modifier = Modifier.fillMaxWidth()
         ) {
-            OutlinedTextField(colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedTextColor = Color.Black,
-            ),
+            OutlinedTextField(
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Black,
+                    focusedTextColor = Color.Black,
+                    focusedLabelColor = Color.Black,
+
+                ),
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.Default.Home,
@@ -85,9 +111,7 @@ fun HomeScreen(viewModel: WeatherViewModel, context: Context) {
                     onClick = {
                         keyboardController?.hide()
                         if (cityToAdd.isNotBlank()) {
-                            viewModel.getWeatherItem(city = cityToAdd.capitalize(), onFailure = {
-                                Toast.makeText(context, "Failed To Load", Toast.LENGTH_SHORT).show()
-                            })
+                            viewModel.getWeatherItem(city = cityToAdd.capitalize())
                             cityToAdd = ""
                         }
                     }
@@ -101,9 +125,14 @@ fun HomeScreen(viewModel: WeatherViewModel, context: Context) {
             }
 
         }
-        LazyColumn(modifier = Modifier
-            .padding(top = 5.dp)
-            .fillMaxSize()) {
+        if(state is RequestState.Loading){
+            CircularProgressIndicator(color = Color.Black)
+        }
+        LazyColumn(
+            modifier = Modifier
+                .padding(top = 5.dp)
+                .fillMaxSize()
+        ) {
             weatherData.let {
                 it?.let {
                     itemsIndexed(it.reversed().toList()) { index, item ->

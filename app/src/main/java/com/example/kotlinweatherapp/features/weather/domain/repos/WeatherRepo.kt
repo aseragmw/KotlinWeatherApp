@@ -5,7 +5,7 @@ import com.example.kotlinweatherapp.features.weather.domain.entities.weather_ent
 
 
 interface WeatherRepo {
-    fun getWeatherItem(city:String,onFailure:()->Unit)
+    suspend fun getWeatherItem(city:String):WeatherEntity?
     fun deleteWeatherItem(weatherItem: WeatherEntity)
     fun getAllWeatherItems():LiveData<MutableList<WeatherEntity>>
 }
