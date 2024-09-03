@@ -13,6 +13,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,14 +29,28 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.kotlinweatherapp.R
 import com.example.kotlinweatherapp.features.weather.domain.entities.weather_entity.WeatherEntity
+import kotlin.random.Random
+
+fun getRandomColor():Color {
+    val random = Random.Default
+    val red = random.nextInt(256)
+    val green = random.nextInt(256)
+    val blue = random.nextInt(256)
+    return Color(red, green, blue)
+}
+
 @Composable
 fun CityWeatherItem(entity:WeatherEntity,onDelete : ()->Unit) {
+    val color by remember{
+        mutableStateOf(getRandomColor())
+    }
+
     Row (
         modifier = Modifier
             .padding(top = 20.dp)
             .clip(RoundedCornerShape(25.dp))
             .fillMaxWidth(1f)
-            .background(Color.Black)
+            .background(color)
             .padding(30.dp)
             .fillMaxHeight(0.3f),
         verticalAlignment = Alignment.CenterVertically,

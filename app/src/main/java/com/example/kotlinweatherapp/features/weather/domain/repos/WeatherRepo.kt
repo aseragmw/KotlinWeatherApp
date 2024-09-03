@@ -8,4 +8,7 @@ interface WeatherRepo {
     suspend fun getWeatherItem(city:String):WeatherEntity?
     fun deleteWeatherItem(weatherItem: WeatherEntity)
     fun getAllWeatherItems():LiveData<MutableList<WeatherEntity>>
+    fun updateAllItems():Unit
+
+
 }

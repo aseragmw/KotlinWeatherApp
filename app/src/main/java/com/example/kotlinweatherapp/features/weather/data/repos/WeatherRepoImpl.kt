@@ -54,5 +54,14 @@ class WeatherRepoImpl @Inject constructor(
         return weatherLocalDataSource.getAllWeatherItems()
     }
 
+    override fun updateAllItems():Unit{
+        CoroutineScope(Dispatchers.IO).launch {
+            val storedWeatherItems = weatherLocalDataSource.getAllWeatherItemsAsList()
+            for (item in storedWeatherItems){
+                getWeatherItem(item.location.split(",")[0])
+            }
+        }
+    }
+
 
 }

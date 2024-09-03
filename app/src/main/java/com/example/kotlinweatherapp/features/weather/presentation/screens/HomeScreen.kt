@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -44,11 +45,15 @@ import com.example.kotlinweatherapp.core.RequestState
 import com.example.kotlinweatherapp.features.weather.domain.entities.weather_entity.WeatherEntity
 import com.example.kotlinweatherapp.features.weather.presentation.composeables.CityWeatherItem
 import com.example.kotlinweatherapp.features.weather.presentation.WeatherViewModel
+import com.example.kotlinweatherapp.features.weather.presentation.composeables.getRandomColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(viewModel: WeatherViewModel, context: Context) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    var forceUpdate by remember {
+        mutableStateOf(false)
+    }
     val weatherData by viewModel.getAllWeatherItems().observeAsState()
 
     var cityToAdd by remember {
@@ -87,6 +92,7 @@ fun HomeScreen(viewModel: WeatherViewModel, context: Context) {
                     focusedBorderColor = Color.Black,
                     focusedTextColor = Color.Black,
                     focusedLabelColor = Color.Black,
+                    unfocusedTrailingIconColor = getRandomColor()
 
                 ),
                 trailingIcon = {
@@ -96,7 +102,7 @@ fun HomeScreen(viewModel: WeatherViewModel, context: Context) {
                     )
                 },
                 label = { Text(text = "Add City") },
-                modifier = Modifier.fillMaxWidth(0.8f),
+                modifier = Modifier.fillMaxWidth(0.6f),
                 value = cityToAdd,
                 onValueChange = {
                     cityToAdd = it
@@ -105,7 +111,7 @@ fun HomeScreen(viewModel: WeatherViewModel, context: Context) {
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(50.dp))
-                    .background(Color.Black)
+                    .background(getRandomColor())
             ) {
                 IconButton(
                     onClick = {
@@ -123,6 +129,24 @@ fun HomeScreen(viewModel: WeatherViewModel, context: Context) {
                     )
                 }
             }
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50.dp))
+                    .background(getRandomColor())
+            ) {
+                IconButton(
+                    onClick = {
+                        viewModel.updateAllItems()
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        tint = Color.White,
+                        contentDescription = "Refresh"
+                    )
+                }
+            }
+
 
         }
         if(state is RequestState.Loading){

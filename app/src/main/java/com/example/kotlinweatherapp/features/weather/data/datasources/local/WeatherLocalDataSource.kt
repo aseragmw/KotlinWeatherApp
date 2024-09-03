@@ -8,4 +8,6 @@ interface WeatherLocalDataSource {
     suspend fun insertWeatherItem(weatherItem:WeatherEntity)
     suspend fun deleteWeatherItem(weatherItem: WeatherEntity)
     fun getAllWeatherItems(): LiveData<MutableList<WeatherEntity>>
+    fun getAllWeatherItemsAsList(): MutableList<WeatherEntity>
+
 }

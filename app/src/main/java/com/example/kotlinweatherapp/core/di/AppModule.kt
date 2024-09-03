@@ -15,6 +15,7 @@ import com.example.kotlinweatherapp.features.weather.domain.repos.WeatherRepo
 import com.example.kotlinweatherapp.features.weather.domain.usecases.DeleteWeatherItemUsecase
 import com.example.kotlinweatherapp.features.weather.domain.usecases.GetAllWeatherItemsUsecase
 import com.example.kotlinweatherapp.features.weather.domain.usecases.GetWeatherItemUsecase
+import com.example.kotlinweatherapp.features.weather.domain.usecases.UpdateAllItemsUsecase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -68,6 +69,13 @@ class AppModule {
     fun provideGetAllWeatherItemUsecase(weatherRepo: WeatherRepo): GetAllWeatherItemsUsecase {
         return GetAllWeatherItemsUsecase(weatherRepo)
     }
+
+    @Provides
+    @Singleton
+    fun provideUpdateAllItemsUsecase(weatherRepo: WeatherRepo): UpdateAllItemsUsecase {
+        return UpdateAllItemsUsecase(weatherRepo)
+    }
+
 
     @Provides
     @Singleton

@@ -46,4 +46,8 @@ class WeatherLocalDataSourceImpl @Inject constructor(
     override fun getAllWeatherItems(): LiveData<MutableList<WeatherEntity>> {
         return weatherDao.getAllItems()
     }
+
+    override fun getAllWeatherItemsAsList(): MutableList<WeatherEntity> {
+        return weatherDao.getAllItemsAsList()
+    }
 }
