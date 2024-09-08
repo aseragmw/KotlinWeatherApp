@@ -20,7 +20,7 @@ class WeatherRepoImpl @Inject constructor(
     val weatherRemoteDataSource: WeatherRemoteDataSource,
     val weatherLocalDataSource: WeatherLocalDataSource
 ) : WeatherRepo {
-    suspend override fun getWeatherItem(city: String):WeatherEntity? {
+    override suspend fun getWeatherItem(city: String):WeatherEntity? {
         return withContext(
             Dispatchers.IO
         ) {

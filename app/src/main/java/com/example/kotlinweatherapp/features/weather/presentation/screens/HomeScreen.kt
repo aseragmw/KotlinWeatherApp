@@ -102,7 +102,7 @@ fun HomeScreen(viewModel: WeatherViewModel, context: Context) {
                     )
                 },
                 label = { Text(text = "Add City") },
-                modifier = Modifier.fillMaxWidth(0.6f),
+                modifier = Modifier.fillMaxWidth(0.8f),
                 value = cityToAdd,
                 onValueChange = {
                     cityToAdd = it
@@ -129,24 +129,6 @@ fun HomeScreen(viewModel: WeatherViewModel, context: Context) {
                     )
                 }
             }
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(50.dp))
-                    .background(getRandomColor())
-            ) {
-                IconButton(
-                    onClick = {
-                        viewModel.updateAllItems()
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        tint = Color.White,
-                        contentDescription = "Refresh"
-                    )
-                }
-            }
-
 
         }
         if(state is RequestState.Loading){

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.kotlinweatherapp.core.MainApp
 import com.example.kotlinweatherapp.core.db.WeatherDAO
+import com.example.kotlinweatherapp.core.services.NotificationService
 import com.example.kotlinweatherapp.features.weather.domain.entities.weather_entity.WeatherEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 
 class WeatherLocalDataSourceImpl @Inject constructor(
-    private val weatherDao: WeatherDAO
+    private val weatherDao: WeatherDAO,
+    private val notificationService: NotificationService
 ) : WeatherLocalDataSource {
     override suspend fun insertWeatherItem(weatherItem: WeatherEntity) {
         CoroutineScope(
@@ -26,10 +28,10 @@ class WeatherLocalDataSourceImpl @Inject constructor(
             val storedItems = weatherDao.getAllItemsAsList()
             val itemExists = storedItems.find { it.location == weatherItem.location }
             if (itemExists != null) {
-                weatherDao.deleteItem(itemExists)
-                weatherDao.insertItem(weatherItem)
+                weatherDao.upsertItem(weatherItem)
             } else {
                 weatherDao.insertItem(weatherItem)
+                notificationService.showNotification("${weatherItem.location} added")
             }
         }
     }
@@ -40,6 +42,7 @@ class WeatherLocalDataSourceImpl @Inject constructor(
         ).launch(
         ) {
             weatherDao.deleteItem(weatherItem)
+            notificationService.showNotification( "${weatherItem.location} deleted")
         }
     }
 

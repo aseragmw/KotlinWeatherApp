@@ -9,7 +9,6 @@ data class WeatherModel(
 ) {
     fun asEntity(): WeatherEntity {
         return WeatherEntity(
-            id = 0,
             location = "${location.name ?: ""}, ${location.country ?: ""}",
             temp = "${current.temp_c ?: ""}°C",
             condition = current.condition.text ?: "",

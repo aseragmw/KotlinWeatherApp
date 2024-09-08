@@ -6,6 +6,7 @@ import com.example.kotlinweatherapp.core.MainApp
 import com.example.kotlinweatherapp.core.db.WeatherDAO
 import com.example.kotlinweatherapp.core.db.WeatherDB
 import com.example.kotlinweatherapp.core.db.WeatherDBBuilder
+import com.example.kotlinweatherapp.core.services.NotificationService
 import com.example.kotlinweatherapp.features.weather.data.datasources.local.WeatherLocalDataSource
 import com.example.kotlinweatherapp.features.weather.data.datasources.local.WeatherLocalDataSourceImpl
 import com.example.kotlinweatherapp.features.weather.data.datasources.remote.WeatherRemoteDataSource
@@ -36,8 +37,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideWeatherLocalDataSource(weatherDao:WeatherDAO): WeatherLocalDataSource {
-        return WeatherLocalDataSourceImpl(weatherDao)
+    fun provideWeatherLocalDataSource(weatherDao:WeatherDAO, notificationService: NotificationService): WeatherLocalDataSource {
+        return WeatherLocalDataSourceImpl(weatherDao,notificationService)
     }
 
     @Provides
@@ -90,6 +91,12 @@ class AppModule {
     @Singleton
     fun provideDB(@ApplicationContext context: Context) : WeatherDB {
         return WeatherDBBuilder(context).getInstance()
+    }
+
+    @Provides
+    @Singleton
+    fun provideContext(@ApplicationContext context: Context):Context{
+        return context
     }
 
 }

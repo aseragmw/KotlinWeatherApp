@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class WeatherEntity(
-    @PrimaryKey(autoGenerate = true) var id: Int = 0,
+    @PrimaryKey
     val location: String,
     val temp: String,
     val condition: String,

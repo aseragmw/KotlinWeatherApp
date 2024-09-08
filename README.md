@@ -1,2 +1,2 @@
 Basic Weather App with Kotlin, Jetpack Compose and StateFlow <br/>
-Dagger Hilt DI, Clean Architecture, Retrofit, ROOM, and Coroutines are applied.
+Dagger Hilt DI, Clean Architecture, Retrofit, ROOM, and Coroutines, Foreground Services, Local Notifications, and Broadcast Receivers are applied.
